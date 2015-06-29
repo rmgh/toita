@@ -15,12 +15,7 @@ class ViewController: UIViewController, UITextViewDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
-        let testObject = PFObject(className: "TestObject")
-        testObject["foo"] = "bar"
-        testObject.saveInBackgroundWithBlock { (success: Bool, error: NSError?) -> Void in
-            println("Object has been saved.")
-        }
-        
+    
         self.textView.layer.borderWidth = 1
         self.textView.delegate = self
     }
@@ -40,5 +35,22 @@ class ViewController: UIViewController, UITextViewDelegate {
         remainLabel.text = "残り \(140 - length)"
         return true
     }
+    
+    @IBAction func submit(sender: UIButton) {
+        let toitaObject = PFObject(className: "ToitaObject")
+        toitaObject["text"] = textView.text
+        toitaObject["userName"] = "User100"
+        toitaObject.saveInBackground()
+        
+        let alert = UIAlertController(title: "", message: "投稿しました", preferredStyle:.Alert)
+        let ok = UIAlertAction(title: "OK", style: .Default) {
+            action in
+            self.navigationController?.popViewControllerAnimated(true)
+            return
+        }
+        alert.addAction(ok)
+        presentViewController(alert, animated: true, completion: nil)
+    }
+    
 }
 
