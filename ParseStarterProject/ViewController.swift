@@ -39,7 +39,7 @@ class ViewController: UIViewController, UITextViewDelegate {
     @IBAction func submit(sender: UIButton) {
         let toitaObject = PFObject(className: "ToitaObject")
         toitaObject["text"] = textView.text
-        toitaObject["userName"] = "User100"
+        toitaObject["user"] = PFUser.currentUser()
         toitaObject.saveInBackground()
         
         let alert = UIAlertController(title: "", message: "投稿しました", preferredStyle:.Alert)

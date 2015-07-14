@@ -51,7 +51,8 @@ class TableViewController: UITableViewController, UITextViewDelegate {
 
         // Configure the cell...
         
-        cell.userLabel.text = self.toitaObjects[indexPath.row]["userName"] as String?
+        let user = self.toitaObjects[indexPath.row]["user"] as PFUser
+        cell.userLabel.text = user.username
         
         let date = self.toitaObjects[indexPath.row].createdAt
         let dateFormatter = NSDateFormatter()
@@ -70,11 +71,19 @@ class TableViewController: UITableViewController, UITextViewDelegate {
 
     override func viewWillAppear(animated: Bool) {
         let query: PFQuery = PFQuery(className: "ToitaObject")
+        query.includeKey("user")
         query.orderByDescending("createdAt")
         query.findObjectsInBackgroundWithBlock { (objects: [AnyObject]!, error: NSError!) -> Void in
-            self.toitaObjects = objects as [PFObject]
-            self.tableView.reloadData()
-        }
+            if (error == nil) {
+                self.toitaObjects = objects as [PFObject]
+                self.tableView.reloadData()
+            }
+            else {
+                let alert = UIAlertView(title: error.localizedDescription
+                    , message: "\(error.localizedFailureReason)\n\(error.localizedRecoverySuggestion)", delegate: nil, cancelButtonTitle: nil, otherButtonTitles: "OK")
+                alert.show()
+            }
+       }
     }
     
     func textView(textView: UITextView, shouldInteractWithURL URL: NSURL, inRange characterRange: NSRange) -> Bool {
