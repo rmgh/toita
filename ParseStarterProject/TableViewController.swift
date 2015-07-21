@@ -51,9 +51,13 @@ class TableViewController: UITableViewController, UITextViewDelegate {
 
         // Configure the cell...
         
-        let user = self.toitaObjects[indexPath.row]["user"] as PFUser
-        cell.userLabel.text = user.username
-        
+        if let user = self.toitaObjects[indexPath.row]["user"] as? PFUser {
+            cell.userLabel.text = user.username
+        }
+        else {
+            cell.userLabel.text = ""
+        }
+       
         let date = self.toitaObjects[indexPath.row].createdAt
         let dateFormatter = NSDateFormatter()
         dateFormatter.locale = NSLocale(localeIdentifier: "ja_JP")
@@ -75,7 +79,7 @@ class TableViewController: UITableViewController, UITextViewDelegate {
         query.orderByDescending("createdAt")
         query.findObjectsInBackgroundWithBlock { (objects: [AnyObject]!, error: NSError!) -> Void in
             if (error == nil) {
-                self.toitaObjects = objects as [PFObject]
+                self.toitaObjects = (objects as? [PFObject]) ?? []
                 self.tableView.reloadData()
             }
             else {
